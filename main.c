@@ -6,12 +6,12 @@
  */
 
 #include "Registers.h"
-#include <util/delay.h>
+//#include <util/delay.h>
 #include "DIO_cnfg.h"
 #include "DIO.h"
 #include "Seven_Seg_Driver.h"
 #include "LED0.h"
-
+#include "Timer.h"
 
 //Report_Error () a function used to report error
 void Report_Error() {
@@ -44,6 +44,10 @@ int main() {
 		Report_Error();
 	}
 
+	if (Timer_Init (TIMER0) != OK) {
+		Report_Error();
+	}
+
 
 	while (1) {
 
@@ -55,8 +59,8 @@ int main() {
 			if (Seven_Seg_Write(i) != OK) {
 				Report_Error();
 			}
-         _delay_ms(500);
-
+			//_delay_ms(500);
+			Timer_Wait(TIMER0,1000);
 
 		}
 
@@ -67,8 +71,8 @@ int main() {
 			if (Seven_Seg_Write(i) != OK) {
 				Report_Error();
 			}
-		_delay_ms(500);
-
+			//_delay_ms(500);
+			Timer_Wait(TIMER0,1000);
 
 		}
 
