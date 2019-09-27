@@ -10,25 +10,69 @@
 #include "DIO_cnfg.h"
 #include "DIO.h"
 #include "Seven_Seg_Driver.h"
+#include "LED0.h"
 
+
+//Report_Error () a function used to report error
+void Report_Error() {
+	LED0_ON(); //If an error happened the led0 will turn on
+}
+
+Std_Func_t Car_Move_Forward() {
+	return LED1_ON();
+}
+Std_Func_t Car_Move_Backward() {
+	return LED2_ON();
+}
+Std_Func_t Car_Move_Stop() {
+	return LED3_ON();
+}
 
 int main() {
 
-	DIO_init(LED0);
+	LED0_Init();
+	LED1_Init();
+	LED2_Init();
+	LED3_Init();
 
-	Seven_Seg_Init();
+	LED0_OFF();
+	LED1_OFF();
+	LED2_OFF();
+	LED3_OFF();
+
+	if (Seven_Seg_Init() != OK) {
+		Report_Error();
+	}
+
 
 	while (1) {
 
-		DIO_write(PORT_B, PIN4, HIGH, LED0); //turn on LED0
-		_delay_ms(500); // delay 500 ms
-		DIO_write(PORT_B, PIN4, LOW, LED0); //turn off LED0
-		_delay_ms(500); //delay 500 ms
 
-		for(uint8 i = 0 ; i < 10 ; i++){
-			Seven_Seg_Write(i);
-			_delay_ms(500);
+		Car_Move_Forward();
+
+		for (uint8 i = 0; i < 10; i++) {
+
+			if (Seven_Seg_Write(i) != OK) {
+				Report_Error();
+			}
+         _delay_ms(500);
+
+
 		}
+
+		Car_Move_Backward();
+
+		for (sint8 i = 9; i >= 0; i--) {
+
+			if (Seven_Seg_Write(i) != OK) {
+				Report_Error();
+			}
+		_delay_ms(500);
+
+
+		}
+
+		Car_Move_Stop();
 
 	}
 }
